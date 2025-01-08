@@ -1,101 +1,123 @@
-import Image from "next/image";
+"use client";
+import React, { useState, useEffect, useRef } from 'react';
+import { Sun, Moon, Send, Bot, User } from 'lucide-react';
+import '@dialectlabs/blinks/index.css';
+import { Action, Blink, useAction } from "@dialectlabs/blinks";
+import { useActionSolanaWalletAdapter } from "@dialectlabs/blinks/hooks/solana";
 
-export default function Home() {
+interface Message {
+  text: string;
+  isBot: boolean;
+}
+
+function App() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState<Message[]>([
+    { text: "Hello! I'm your AI assistant. How can I help you today?", isBot: true }
+  ]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const actionApiUrl = 'http://localhost:3000/api/actions/transferSol';
+  const { adapter } = useActionSolanaWalletAdapter('https://api.devnet.solana.com');
+  const { action, isLoading } = useAction({ url: actionApiUrl });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+  }, [darkMode]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const userMessage: Message = { text: input, isBot: false };
+
+    setMessages((prev) => [...prev, userMessage]);
+
+    const botResponse: Message = {
+      text: "I'm a frontend demo, but I can simulate responses! Here's a reply to your message.",
+      isBot: true
+    };
+
+    setTimeout(() => {
+      setMessages((prev) => [...prev, botResponse]);
+    }, 1000); // Simulate bot typing delay
+
+    setInput('');
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className={`min-h-screen transition-colors duration-200 ${darkMode ? 'dark:bg-black' : 'bg-gray-50'}`}>
+      <div className="max-w-4xl mx-auto p-4">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold dark:text-white flex items-center gap-2">
+            <Bot className="w-8 h-8" />
+            AI E-commerce Assistant
+          </h1>
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            {darkMode ? <Sun className="w-6 h-6 text-yellow-400" /> : <Moon className="w-6 h-6 text-gray-600" />}
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Chat Window */}
+        <div className="bg-white dark:bg-black rounded-lg shadow-lg h-[600px] flex flex-col">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`flex items-start gap-2 ${message.isBot ? '' : 'flex-row-reverse'}`}
+              >
+                <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                  {message.isBot ? <Bot size={30} /> : <User size={30} />}
+                </div>
+                <div
+                  className={`rounded-lg p-4 max-w-[80%] ${
+                    message.isBot
+                      ? 'bg-blue-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200'
+                      : 'bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200'
+                  }`}
+                >
+                  {message.text}
+                  {message.isBot && !isLoading && <Blink action={action} adapter={adapter} />}
+                </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="p-4 border-t dark:border-gray-800">
+            <div className="flex gap-2">
+              <label htmlFor="message-input" className="sr-only">Message</label>
+              <input
+                id="message-input"
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type your message..."
+                className="flex-1 rounded-lg border dark:border-b-gray-900  
+                  p-4 focus:outline-white focus:ring-2 focus:ring-blue-500 
+                  dark:bg-black dark:text-white"
+              />
+              <button
+                type="submit"
+                className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 transition-colors flex items-center gap-2 dark:bg-black dark:text-white"
+              >
+                <Send size={20} />
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
+
+export default App;
