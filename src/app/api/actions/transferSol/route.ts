@@ -13,8 +13,6 @@ import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, Connection, cl
 
   export const GET = async (req: Request) => {
 
-    let amountParameterName = "" 
-    let thankYouNote = ""
     const payload: ActionGetResponse ={
       title: 'Alice\'s Adventures',
       icon: 'https://ucarecdn.com/7aa46c85-08a4-4bc7-9376-88ec48bb1f43/-/preview/880x864/-/quality/smart/-/format/auto/',
@@ -95,7 +93,7 @@ import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, Connection, cl
     const payload : ActionPostResponse = await createPostResponse({
       fields : {
         transaction,
-        message: "Optional message to include with transaction",
+        message: serialTX,
         type : "transaction"
       }
     })
