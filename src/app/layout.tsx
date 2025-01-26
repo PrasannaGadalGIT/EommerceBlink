@@ -1,5 +1,11 @@
-import "./globals.css";
 
+import "./globals.css";
+import { Karla } from 'next/font/google'
+import SessionWrapper from "@/components/SessionWrapper";
+const karla = Karla({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+});
 
 export default function RootLayout({
   children,
@@ -8,14 +14,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className=""
-      >
-     
-             {children}
-      
-       
-      </body>
+      <SessionWrapper>
+        <body
+          className={karla.className}
+        >
+          {children}
+        </body>
+      </SessionWrapper>
+
     </html>
   );
 }
