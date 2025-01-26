@@ -1,10 +1,9 @@
 "use client"
 import React from 'react';
 import { Button } from './ui/button';
-import Border from './Border';
 import { FaGoogle } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa6";
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 const AuthButtons: React.FC = () => {
 
     const { data: session } = useSession()

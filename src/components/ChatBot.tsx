@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Sun, Moon, Send, Bot, User } from 'lucide-react';
 import '@dialectlabs/blinks/index.css';
 import { signOut, useSession } from 'next-auth/react';
-import { redirect } from 'next/dist/server/api-utils';
 import { useRouter } from "next/navigation";
 import { Button } from '@/components/ui/button';
 interface Message {
@@ -13,7 +12,7 @@ interface Message {
 }
 
 const ChatBot = () => {
-    const { data: session, status} = useSession()
+    const { data:  session, status} = useSession()
     const router = useRouter()
     const [darkMode, setDarkMode] = useState(false);
     const [input, setInput] = useState('');
@@ -48,7 +47,7 @@ const ChatBot = () => {
     }, [messages]);
   
     useEffect(() => {
-      if (status === "unauthenticated") {
+      if (status === "unauthenticated" && !session) {
         router.push('/login');
       }
       if(status === "loading"){
